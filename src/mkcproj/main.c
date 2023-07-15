@@ -9,7 +9,7 @@ void RequestInput(const cstr Prompt, cstr *field) {
 }
 void About() {
   WriteLine("mkcproj - MaKe a C PROJect");
-  Write("Copyright (C) 2023 Creeper Lv");
+  WriteLine("Copyright (C) 2023 Creeper Lv");
   Write("Version:");
   WriteLine(VERSION);
   WriteLine(
@@ -110,8 +110,9 @@ int main(int argc, cstr *argv) {
     FileWriteLine(scriptf, "EXE=\"$EXE.exe\"");
     FileWriteLine(scriptf, "fi");
     FileWriteLine(scriptf, "echo \"Output:bin/$EXE\"");
+    FileWrite(scriptf, "find ./src/ -name \"*.c\" | xargs ");
     FileWrite(scriptf, CC);
-    FileWrite(scriptf, " ./src/**/*.c");
+    //    FileWrite(scriptf, " ./src/**/*.c");
     if (ProjectVersion != null) {
       if (!CStrIsEqual(ProjectVersion, "")) {
         FileWrite(scriptf, " -DVERSION=\'\"");

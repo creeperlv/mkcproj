@@ -10,4 +10,4 @@ then
 EXE="$EXE.exe"
 fi
 echo "Output:bin/$EXE"
-gcc ./src/**/*.c -DVERSION='"1.1.2.0"' -o "bin/$EXE"
+find ./src/ -name "*.c" | xargs gcc -DVERSION='"1.2.3.0"' -o "bin/$EXE"
