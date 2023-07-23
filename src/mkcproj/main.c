@@ -161,6 +161,7 @@ int main(int argc, cstr *argv) {
     FileWriteLine(scriptf, "#Auto Created by mkcproj.");
     FileWriteLine(scriptf, "/[Bb]in/");
     FileWriteLine(scriptf, "/[Ss]cripts/");
+    FileWriteLine(scriptf, "mklocal.mkp");
     fclose(scriptf);
     WriteLine("Created .gitignore.");
   }
