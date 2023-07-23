@@ -36,6 +36,8 @@ void Help() {
   WriteLine("-i|--install <string>");
   WriteLine("\tSpecify the install path.");
   WriteLine("\tDefault=\"/bin/\"");
+  WriteLine("-gi|--git-ingore");
+  WriteLine("\tCreate a .gitignore file.");
 }
 int main(int argc, cstr *argv) {
   cstr ProjectName = NULL;
@@ -43,17 +45,16 @@ int main(int argc, cstr *argv) {
   cstr CC = NULL;
   cstr OUTPUT = NULL;
   cstr INSTALL = NULL;
+  bool CreateGitIgnore = false;
   for (int i = 0; i < argc; i++) {
     cstr item = argv[i];
     if (CStrIsEqual(item, "-h") || CStrIsEqual(item, "--help")) {
       Help();
       return 0;
-    }
-    if (CStrIsEqual(item, "-a") || CStrIsEqual(item, "--about")) {
+    } else if (CStrIsEqual(item, "-a") || CStrIsEqual(item, "--about")) {
       About();
       return 0;
-    }
-    if (CStrIsEqual(item, "-n") || CStrIsEqual(item, "--name")) {
+    } else if (CStrIsEqual(item, "-n") || CStrIsEqual(item, "--name")) {
       ProjectName = argv[i + 1];
       i++;
     } else if (CStrIsEqual(item, "-cc") || CStrIsEqual(item, "--c-compiler")) {
@@ -67,6 +68,9 @@ int main(int argc, cstr *argv) {
       i++;
     } else if (CStrIsEqual(item, "-v") || CStrIsEqual(item, "--version")) {
       ProjectVersion = argv[i + 1];
+      i++;
+    } else if (CStrIsEqual(item, "-gi") || CStrIsEqual(item, "--git-ignore")) {
+      CreateGitIgnore = true;
       i++;
     }
   }
@@ -101,6 +105,10 @@ int main(int argc, cstr *argv) {
     FileWrite(scriptf, "EXE=");
     FileWriteLine(scriptf, ProjectName);
     FileWriteLine(scriptf, "Sys=$(uname)");
+    FileWriteLine(scriptf, "if [ ! -d \"./bin/\" ]");
+    FileWriteLine(scriptf, "then");
+    FileWriteLine(scriptf, "	mkdir bin");
+    FileWriteLine(scriptf, "fi");
     FileWriteLine(scriptf, "if [ -z \"${Sys##*\"Win\"*}\" ]");
     FileWriteLine(scriptf, "then");
     FileWriteLine(scriptf, "EXE=\"$EXE.exe\"");
@@ -112,7 +120,6 @@ int main(int argc, cstr *argv) {
     FileWriteLine(scriptf, "echo \"Output:bin/$EXE\"");
     FileWrite(scriptf, "find ./src/ -name \"*.c\" | xargs ");
     FileWrite(scriptf, CC);
-    //    FileWrite(scriptf, " ./src/**/*.c");
     if (ProjectVersion != null) {
       if (!CStrIsEqual(ProjectVersion, "")) {
         FileWrite(scriptf, " -DVERSION=\'\"");
@@ -148,6 +155,14 @@ int main(int argc, cstr *argv) {
     FileWriteLine(scriptf, "");
     fclose(scriptf);
     WriteLine("Created install script.");
+  }
+  if (CreateGitIgnore) {
+    FILE *scriptf = fopen(".gitignore", "wb");
+    FileWriteLine(scriptf, "#Auto Created by mkcproj.");
+    FileWriteLine(scriptf, "/[Bb]in/");
+    FileWriteLine(scriptf, "/[Ss]cripts/");
+    fclose(scriptf);
+    WriteLine("Created .gitignore.");
   }
   return 0;
 }
